@@ -40,7 +40,9 @@ def data_uri_to_cv2_img(uri):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     return img
 
-
+@app.get("/")
+async def home():
+    return {"message": "Hello World"}
 
 
 @app.post("/files/")
