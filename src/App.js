@@ -15,12 +15,13 @@ function App() {
   const [recordedChunks, setRecordedChunks] = useState([]);
 
   const [rec_data, setRecData] = useState({})
+  const [box_data, setBoxData] = useState({})
 
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const boxRef = useRef(null);
 
-  // const [socket, setSocket] = useState(null);
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
 
@@ -35,24 +36,54 @@ function App() {
     boxCanvas.height = webcamRef.current.video.videoHeight
     
     boxContext.lineWidth = "4"
-    boxContext.strokeStyle = "red";
+    boxContext.strokeStyle = "lightblue";
 
 
-    boxContext.strokeRect(rec_data?.region?.x, rec_data?.region?.y, rec_data?.region?.w, rec_data?.region?.h)
+    boxContext.strokeRect(box_data?.x, box_data?.y, box_data?.w, box_data?.h)
 
 
 
-  }, [rec_data]);
+  }, [box_data]);
+
+  // useEffect(() => {
 
 
-  
 
-  
-  // const ws = new WebSocket("ws://localhost:5000/ws");  
-  // ws.binaryType = "arraybuffer";
+
+  //   const boxCanvas = boxRef.current;
+  //   const boxContext = boxCanvas.getContext('2d');
+
+    
+  //   boxCanvas.width = webcamRef.current.video.videoWidth
+  //   boxCanvas.height = webcamRef.current.video.videoHeight
+    
+  //   boxContext.lineWidth = "4"
+  //   boxContext.strokeStyle = "red";
+
+
+  //   boxContext.strokeRect(rec_data?.region?.x, rec_data?.region?.y, rec_data?.region?.w, rec_data?.region?.h)
+
+
+
+  // }, [rec_data]);
+
+
+  // const ws = new WebSocket("ws://localhost:8000/ws");  
   // ws.onopen = function(e) {
   //     console.log("[open] Connection established");
   // };
+
+
+  // ws.onmessage = function(e) {
+  //   console.log(e.data)
+  // }
+
+  
+  // useEffect(() => {
+  //   const newSocket = io(`http://localhost:5000`, { transports : ['websocket'] });
+  //   setSocket(newSocket);
+  //   return () => newSocket.close();
+  // }, [setSocket]);
 
 
 
@@ -94,23 +125,51 @@ function App() {
         
     const handleMedia = (e) => {
       
-      function postFile(file, context) {
-        console.log(1)
+      async function postBox(file) {
+        // console.log(1)
         //Set options as form data
         let formdata = new FormData();
         formdata.append("file", file);
 
-        fetch(`http://localhost:8000/files`, {
+          await fetch(`http://localhost:8001/boxes`, {
+            method: 'POST',
+            body: formdata
+          })
+          .then(res => res.json())
+          .then(json => {
+            // console.log(json)
+            
+            // console.log('postBox')
+            setBoxData(json)
+          })
+          .catch(e => {
+            console.log(e)
+          })
+
+        
+        
+    }
+
+      async function postFile(file, op_name) {
+        //Set options as form data
+        let formdata = new FormData();
+        formdata.append("file", file);
+        // 141.8.195.228
+        await fetch(`http://localhost:8000/files`, {
           method: 'POST',
           body: formdata
         })
         .then(res => res.json())
         .then(json => {
           setRecData(json)
+          console.log(json)
+          // console.log('postFile')
         })
         .catch(e => {
           console.log(e)
         })
+
+        
         
     }
 
@@ -131,13 +190,32 @@ function App() {
         
         
         context.drawImage(webcamRef.current.video, 0, 0, webcamRef.current.video.videoWidth, webcamRef.current.video.videoHeight)
-        canvas.toBlob((file) => {postFile(file, boxContext)}, 'image/jpeg')
+        canvas.toBlob((file) => {postFile(file, 'video')}, 'image/jpeg')
 
         // console.log(rec_data?.region?.x)
         
+        // ws.send(1)
 
 
-      }, 1500)
+      }, 3000)
+
+
+      setInterval(() => {
+
+        
+        canvas.width = webcamRef.current.video.videoWidth
+        canvas.height = webcamRef.current.video.videoHeight
+        
+        
+        context.drawImage(webcamRef.current.video, 0, 0, webcamRef.current.video.videoWidth, webcamRef.current.video.videoHeight)
+        canvas.toBlob((file) => {postBox(file)}, 'image/jpeg')
+
+        // console.log(rec_data?.region?.x)
+        
+        // ws.send(1)
+
+
+      }, 150)
 
 
   }

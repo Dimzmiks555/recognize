@@ -25,7 +25,7 @@ app.use(express.static(publicDirectoryPath));
 
 io.on("connection",(client)=>{
     console.log('New websocket connection');
-    client.on('messageFromClient', msg => {
+    client.on('message', msg => {
         console.log(msg)
         io.emit('messageFromServer', msg);
     });
