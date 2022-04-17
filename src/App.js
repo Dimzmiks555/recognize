@@ -2,9 +2,9 @@ import logo from './logo.svg';
 import './App.css';
 import io from 'socket.io-client';
 import Webcam from "react-webcam";
+import { Helmet } from "react-helmet";
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {useDropzone} from 'react-dropzone';
-
 
 
 function App() {
@@ -228,6 +228,11 @@ function App() {
 
   return (
     <div className="App">
+      <Helmet>
+          <meta charSet="utf-8" />
+          <title>BREAKING BAD</title>
+          <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"></meta>
+      </Helmet>
       <header className="App-header">
         
       </header>
