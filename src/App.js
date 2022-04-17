@@ -93,7 +93,7 @@ function App() {
         let formdata = new FormData();
         formdata.append("file", file);
 
-          await fetch(`http://localhost:8001/boxes`, {
+          await fetch(`http://141.8.195.228:8002/boxes`, {
             method: 'POST',
             body: formdata
           })
@@ -117,7 +117,7 @@ function App() {
         let formdata = new FormData();
         formdata.append("file", file);
         // 141.8.195.228
-        await fetch(`http://localhost:8000/files`, {
+        await fetch(`http://141.8.195.228:5000/files`, {
           method: 'POST',
           body: formdata
         })
@@ -189,15 +189,34 @@ function App() {
 
         
     
+  const emotions = {
+    'sad': 'Грусть',
+    'angry': 'Злость',
+    'fear': 'Страх',
+    'neutral': 'Нейтрально',
+    'surprise': 'Удивление',
+    'happy': 'Радость',
+  }
+
+  const races = {
+    'white': 'Европеоидная',
+    'asian': 'Азиатская',
+    'indian': 'Индийская',
+    'black': 'Афроамериканская',
+    'middle eastern': 'Средиземноморская',
+    'latino hispanic': 'Латинская',
+  }
 
   
 
   const data = [
-    {color: '#780E9D', type: 'Эмоция', value: rec_data?.dominant_emotion, icon: '🙂'},
-    {color: '#EC2929', type: 'Раса', value: 'Европеоидная', icon: '👨'},
+    {color: '#780E9D', type: 'Эмоция', value: emotions[rec_data?.dominant_emotion], icon: '🙂'},
+    {color: '#EC2929', type: 'Раса', value: races[rec_data?.dominant_race], icon: '👨'},
     // {color: '#F612C4', type: 'Пол', value: 'Мужской', icon: '👔'},
-    {color: '#2A2', type: 'Тест', value: 'Хз чо писать', icon: '🙂'},
+    // {color: '#2A2', type: 'Тест', value: 'Хз чо писать', icon: '🙂'},
   ]
+
+
 
   const files = acceptedFiles.map(file => (
     <li key={file.path}>
@@ -213,7 +232,7 @@ function App() {
         
       </header>
       <main>
-          <div className='data_block'>
+          <div className='data_block' style={{marginTop: 160}}>
             {/* <div className='switcher'>
                 <button className={mode == 'camera' && 'active'} onClick={e => {setMode('camera')}}>
                     Камера
@@ -267,47 +286,51 @@ function App() {
           <div className='info_block'>
               <h2>РЕЗУЛЬТАТЫ РАСПОЗНАВАНИЯ</h2>
               <div className='recognition_results'>
-                  <div className='recognition_card'>
-                    <div className='features'>
-                      {data.map(item => (
-                        <div key={item.color} className='features_item' >
-                          <div className='features_item__header' style={{background: item.color}}>
-                            <p>{item.type}</p>
+                 {
+                    rec_data?.age && (
+                      <div className='recognition_card'>
+                      <div className='features'>
+                        {data.map(item => (
+                          <div key={item.color} className='features_item' >
+                            <div className='features_item__header' style={{background: item.color}}>
+                              <p>{item.type}</p>
+                            </div>
+                            <div className='features_item__body' style={{border: `2px solid ${item.color}`}}>
+                                <div className='feature_icon'>
+                                  {item.icon}
+                                </div>
+                                <div className='feature_text'>
+                                  {item.value}
+                                </div>
+                            </div>
                           </div>
-                          <div className='features_item__body' style={{border: `2px solid ${item.color}`}}>
-                              <div className='feature_icon'>
-                                {item.icon}
-                              </div>
-                              <div className='feature_text'>
-                                {item.value}
-                              </div>
+                        ))}
+                        <div className='features_item' >
+                            <div className='features_item__header' style={{background: '#333'}}>
+                              <p>Пол</p>
+                            </div>
+                            <div className='features_item__body' style={{border: `2px solid #333`}}>
+                                <div className='feature_icon'>
+                                👔
+                                </div>
+                                <div className='feature_text'>
+                                  {rec_data?.gender == 'Woman' ? 'Женский' : 'Мужской'}
+                                </div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                      <div className='features_item' >
-                          <div className='features_item__header' style={{background: '#333'}}>
-                            <p>Пол</p>
+                        
+                      </div>
+                      <div className='card_footer'>
+                          <div className='card_footer__age'>
+                              <span>{rec_data?.age && rec_data?.age}</span> {rec_data?.age && 'лет'}
                           </div>
-                          <div className='features_item__body' style={{border: `2px solid #333`}}>
-                              <div className='feature_icon'>
-                              👔
-                              </div>
-                              <div className='feature_text'>
-                                {rec_data?.gender == 'Woman' ? 'Женский' : 'Мужской'}
-                              </div>
+                          <div className='card_footer__number'>
+                              1
                           </div>
-                        </div>
-                      
+                      </div>
                     </div>
-                    <div className='card_footer'>
-                        <div className='card_footer__age'>
-                            <span>{rec_data?.age}</span> лет
-                        </div>
-                        <div className='card_footer__number'>
-                            1
-                        </div>
-                    </div>
-                  </div>
+                    )
+                 }
               </div>
           </div>
       </main>
