@@ -32,8 +32,8 @@ function App() {
     const boxContext = boxCanvas.getContext('2d');
 
     
-    boxCanvas.width = webcamRef.current.video.videoWidth
-    boxCanvas.height = webcamRef.current.video.videoHeight
+    boxCanvas.width = webcamRef.current.videoWidth
+    boxCanvas.height = webcamRef.current.videoHeight
     
     boxContext.lineWidth = "4"
     boxContext.strokeStyle = "lightblue";
@@ -45,85 +45,42 @@ function App() {
 
   }, [box_data]);
 
-  // useEffect(() => {
+  const constraints = {
+      audio: false,
+      video: {
+          width: {min: 640, ideal: 1280, max: 1920},
+          height: {min: 480, ideal: 720, max: 1080}
+      }
+  };
 
 
+  //Get camera video
 
+  useEffect(() => {
 
-  //   const boxCanvas = boxRef.current;
-  //   const boxContext = boxCanvas.getContext('2d');
+    // var video = document.querySelector("#myVideo");
 
-    
-  //   boxCanvas.width = webcamRef.current.video.videoWidth
-  //   boxCanvas.height = webcamRef.current.video.videoHeight
-    
-  //   boxContext.lineWidth = "4"
-  //   boxContext.strokeStyle = "red";
+    function handleVideo(stream) {
+      webcamRef.current.srcObject  = stream;
+      webcamRef.current.play();
 
+    }
 
-  //   boxContext.strokeRect(rec_data?.region?.x, rec_data?.region?.y, rec_data?.region?.w, rec_data?.region?.h)
+    function videoError() {
 
+    }
 
-
-  // }, [rec_data]);
-
-
-  // const ws = new WebSocket("ws://localhost:8000/ws");  
-  // ws.onopen = function(e) {
-  //     console.log("[open] Connection established");
-  // };
-
-
-  // ws.onmessage = function(e) {
-  //   console.log(e.data)
-  // }
-
+    navigator.getUserMedia({video: true}, handleVideo, videoError)
+    // .then(stream => {
+    //     webcamRef.current.srcObject = stream;
+    //     console.log("Got local user video");
   
-  // useEffect(() => {
-  //   const newSocket = io(`http://localhost:5000`, { transports : ['websocket'] });
-  //   setSocket(newSocket);
-  //   return () => newSocket.close();
-  // }, [setSocket]);
+    // })
+    // .catch(err => {
+    //     console.log('navigator.getUserMedia error: ', err)
+    // });
 
-
-
-    // const handleMedia = (e) => {
-    //     const recorder = new MediaRecorder(e)
-    //     // console.log(imageSrc)
-    //     // ws.binaryType = "arraybuffer";
-    //     recorder.ondataavailable = event => {
-
-    //         // get the Blob from the event
-    //         const blob = event.data;
-
-    //         setWSData(blob)
-
-    //         let file = new File([blob], "file");
-
-    //         let formData = new FormData()
-
-    //         formData.append('file', blob)
-
-    //         fetch(`http://localhost:8000/files`, {
-    //           method: 'POST',
-    //           body: formData
-    //         })
-    //         .then(res => res.json())
-    //         .then(json => {
-    //           console.log(json)
-    //         })
-    //         .catch(e => {
-    //           console.log(e)
-    //         })
-              
-
-    //     };
-
-    //     recorder.start(5000);
-    // }
-
-        
-    const handleMedia = (e) => {
+    webcamRef.current.onplaying = (e) => {
       
       async function postBox(file) {
         // console.log(1)
@@ -185,11 +142,11 @@ function App() {
       setInterval(() => {
 
         
-        canvas.width = webcamRef.current.video.videoWidth
-        canvas.height = webcamRef.current.video.videoHeight
+        canvas.width = webcamRef.current.videoWidth
+        canvas.height = webcamRef.current.videoHeight
         
         
-        context.drawImage(webcamRef.current.video, 0, 0, webcamRef.current.video.videoWidth, webcamRef.current.video.videoHeight)
+        context.drawImage(webcamRef.current, 0, 0, webcamRef.current.videoWidth, webcamRef.current.videoHeight)
         canvas.toBlob((file) => {postFile(file, 'video')}, 'image/jpeg')
 
         // console.log(rec_data?.region?.x)
@@ -203,11 +160,11 @@ function App() {
       setInterval(() => {
 
         
-        canvas.width = webcamRef.current.video.videoWidth
-        canvas.height = webcamRef.current.video.videoHeight
+        canvas.width = webcamRef.current.videoWidth
+        canvas.height = webcamRef.current.videoHeight
         
         
-        context.drawImage(webcamRef.current.video, 0, 0, webcamRef.current.video.videoWidth, webcamRef.current.video.videoHeight)
+        context.drawImage(webcamRef.current, 0, 0, webcamRef.current.videoWidth, webcamRef.current.videoHeight)
         canvas.toBlob((file) => {postBox(file)}, 'image/jpeg')
 
         // console.log(rec_data?.region?.x)
@@ -220,6 +177,13 @@ function App() {
 
   }
         
+
+
+
+  }, [navigator])
+
+        
+    
 
   
 
@@ -245,14 +209,14 @@ function App() {
       </header>
       <main>
           <div className='data_block'>
-            <div className='switcher'>
+            {/* <div className='switcher'>
                 <button className={mode == 'camera' && 'active'} onClick={e => {setMode('camera')}}>
                     Камера
                 </button>
                 <button className={mode == 'photo' && 'active'} onClick={e => {setMode('photo')}}>
                     Фото
                 </button>
-            </div>
+            </div> */}
             {
               mode == 'camera' ? (
                 <>
@@ -264,13 +228,15 @@ function App() {
                   <div className='camera_block' style={{position: 'relative'}}>
 
 
-                    <Webcam 
+                    {/* <Webcam 
                       // id="sourceVideo"
                       style={{zIndex: 10}}
                       screenshotFormat="image/jpeg"
                       onUserMedia={(e) => handleMedia(e)}
                       ref={webcamRef}
-                    />
+                    /> */}
+
+                    <video id="myVideo" style={{zIndex: 10}} ref={webcamRef} ></video>
                     
                     <canvas style={{position: 'absolute', top: 0, left: 0, zIndex: 0}} ref={canvasRef}>
                     </canvas>
