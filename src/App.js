@@ -93,7 +93,7 @@ function App() {
         let formdata = new FormData();
         formdata.append("file", file);
 
-          await fetch(`http://141.8.195.228:8002/boxes`, {
+          await fetch(`http://localhost:8001/boxes`, {
             method: 'POST',
             body: formdata
           })
@@ -117,7 +117,7 @@ function App() {
         let formdata = new FormData();
         formdata.append("file", file);
         // 141.8.195.228
-        await fetch(`http://141.8.195.228:5000/files`, {
+        await fetch(`http://localhost:8000/files`, {
           method: 'POST',
           body: formdata
         })
