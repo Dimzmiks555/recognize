@@ -70,7 +70,12 @@ function App() {
 
     }
 
-    navigator.getUserMedia({video: true}, handleVideo, videoError)
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+
+    if (navigator.getUserMedia) {   
+      navigator.getUserMedia({video: true}, handleVideo, videoError)
+    }
+
     // .then(stream => {
     //     webcamRef.current.srcObject = stream;
     //     console.log("Got local user video");
